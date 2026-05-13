@@ -1,284 +1,399 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zach Martin - Personality Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            color: #f8fafc;
-        }
-        
-        /* Custom Tooltip Styling */
-        .tooltip-content {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            transform: translateY(10px);
-        }
-        
-        .has-tooltip:hover .tooltip-content {
-            visibility: visible;
-            opacity: 1;
-            transform: translateY(0);
-        }
+import React, { useState } from 'react';
+import { 
+  BrainCircuit, 
+  Target, 
+  Users, 
+  MessageSquare, 
+  ShieldAlert, 
+  Zap,
+  Activity,
+  Award,
+  ChevronRight
+} from 'lucide-react';
 
-        .gradient-text {
-            background: linear-gradient(135deg, #facc15, #ef4444);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-    </style>
-</head>
-<body class="min-h-screen p-6 md:p-12">
+// --- Data Extracted from Zach Martin's Insights Profile ---
+const profileData = {
+  name: "Zach Martin",
+  role: "AI Solutions Consultant",
+  company: "Braze",
+  type: "26: Motivating Inspirer (Classic)",
+  overview: "Zach enthusiastically and co-operatively joins in activities and can juggle several tasks at once. He radiates goodwill, enthusiasm, and a natural charisma, making him highly adept at building relationships and inspiring teams.",
+  colorDynamics: [
+    { color: 'Blue', conscious: 19, unconscious: 12, hex: 'bg-blue-600', fill: '#2563eb', description: 'Less naturally inclined toward rigid analysis; prefers dynamic action to painstaking detail.' },
+    { color: 'Green', conscious: 33, unconscious: 31, hex: 'bg-green-500', fill: '#22c55e', description: 'Even-tempered and tolerant, valuing harmony and democratic processes within the team.' },
+    { color: 'Yellow', conscious: 88, unconscious: 81, hex: 'bg-yellow-400', fill: '#facc15', description: 'Radiates goodwill, enthusiasm, and charismatic charm. Highly articulate and socially adept.' },
+    { color: 'Red', conscious: 69, unconscious: 67, hex: 'bg-red-600', fill: '#dc2626', description: 'High drive, direction, and sociability. Throws himself completely into new inspirations.' }
+  ],
+  strengths: [
+    { title: "Relationship Builder", tip: "Builds relationships quickly and effectively, ensuring strong team and client bonds." },
+    { title: "Articulate Communicator", tip: "Articulate and active in communication, exuding charismatic charm." },
+    { title: "Idea Generator", tip: "Generates a prolific number of ideas and possibilities beyond the obvious." },
+    { title: "Empathetic & Perceptive", tip: "Good at 'reading' people and perceptive of the potential in others' views." },
+    { title: "Inspirational Approach", tip: "Provides inspiration and enthusiasm, bringing fresh ways of thinking to the group." }
+  ],
+  weaknesses: [
+    { title: "Unrealistic Deadlines", tip: "May set unrealistic deadlines for himself and others due to eagerness." },
+    { title: "Poor Preparation", tip: "May prepare inadequately or poorly, ignoring the practical details." },
+    { title: "Impulsive Speech", tip: "May occasionally say something without thinking, and then regret it." },
+    { title: "Lacks Persistence", tip: "Somewhat lacking in persistence once a job becomes routine or dull." },
+    { title: "Over-promises", tip: "In his attempts to please others, he may make promises he cannot fulfill." }
+  ],
+  teamValue: [
+    { title: "High Aspirations", tip: "Maintains and generates high team aspirations and morale." },
+    { title: "Activity Creator", tip: "Creates considerable activity and can juggle several tasks at once." },
+    { title: "Positive Player", tip: "Seen as a positive team player who promotes harmony and democracy." }
+  ],
+  communication: {
+    dos: [
+      { rule: "Positive & Open", tip: "Maintain a positive and open stance; share problems openly." },
+      { rule: "Talk with Enthusiasm", tip: "Talk tangibly and with enthusiasm to match his energy." },
+      { rule: "Be Spontaneous", tip: "Be spontaneous and harmonious; provide lots of team contact." }
+    ],
+    donts: [
+      { rule: "Don't Be Rigid", tip: "Avoid sticking rigidly to business issues or emphasizing established processes." },
+      { rule: "Don't Dampen Energy", tip: "Never dampen his enthusiastic energy with negative inputs or hostile environments." },
+      { rule: "Don't Dictate", tip: "Don't expect a favorable response if you dictate policy or unnecessarily challenge ideas." }
+    ]
+  }
+};
 
-    <div class="max-w-6xl mx-auto">
-        <!-- Header Profile Section -->
-        <header class="text-center mb-12">
-            <div class="inline-block p-1 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 mb-4">
-                <div class="h-24 w-24 rounded-full bg-slate-900 flex items-center justify-center text-3xl">
-                    <i class="fa-solid fa-user-astronaut text-yellow-400"></i>
-                </div>
-            </div>
-            <h1 class="text-4xl md:text-5xl font-bold mb-2">Zach Martin</h1>
-            <h2 class="text-xl md:text-2xl text-slate-300 font-light mb-4">26: <span class="gradient-text font-semibold">Motivating Inspirer</span> (Classic)</h2>
-            <div class="flex items-center justify-center space-x-2 text-sm text-slate-400">
-                <i class="fa-solid fa-envelope"></i>
-                <span>zachary.martin1@braze.com</span>
-            </div>
-        </header>
+// --- Components ---
 
-        <!-- Main Dashboard Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-            <!-- Card 1: Personal Style -->
-            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors">
-                <div class="flex items-center mb-4 text-blue-400">
-                    <i class="fa-solid fa-bolt text-xl mr-3"></i>
-                    <h3 class="text-lg font-semibold text-white">Personal Style</h3>
-                </div>
-                <ul class="space-y-3">
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Energetic & Cooperative</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Zach enthusiastically and co-operatively joins in activities and can juggle several activities at once. Bored by repetitive facts.
-                        </div>
-                    </li>
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Radiates Goodwill</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            He is optimistic about life in general and human potential in particular. Attends to others' wants as a satisfying expression of deeper needs.
-                        </div>
-                    </li>
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Big Picture Thinker</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Comfortable letting others manage technical aspects so he can devote full energies to creating a co-operative, comfortable environment.
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Card 2: Key Strengths -->
-            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors">
-                <div class="flex items-center mb-4 text-green-400">
-                    <i class="fa-solid fa-star text-xl mr-3"></i>
-                    <h3 class="text-lg font-semibold text-white">Key Strengths</h3>
-                </div>
-                <ul class="space-y-3">
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Relationship Builder</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Builds relationships quickly and effectively. Has an outgoing nature.
-                        </div>
-                    </li>
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Articulate Communicator</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Articulate and active in communication. Interactive and inspirational approach.
-                        </div>
-                    </li>
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Perceptive & Empathetic</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Compassionate to those around him. Can "go with the flow", particularly where people are concerned.
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Card 3: Value to the Team -->
-            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors">
-                <div class="flex items-center mb-4 text-purple-400">
-                    <i class="fa-solid fa-users text-xl mr-3"></i>
-                    <h3 class="text-lg font-semibold text-white">Value to the Team</h3>
-                </div>
-                <ul class="space-y-3">
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Idea Generator</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Generates a prolific number of ideas and impacts many and varied concepts.
-                        </div>
-                    </li>
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Activity Catalyst</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Creates considerable activity. Exudes high drive, direction, and sociability.
-                        </div>
-                    </li>
-                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium">Aspirational Leader</span>
-                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
-                        </div>
-                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
-                            Maintains and generates high team aspirations. Provides inspiration and enthusiasm.
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Card 4: Communication -->
-            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors md:col-span-2 lg:col-span-1">
-                <div class="flex items-center mb-4 text-pink-400">
-                    <i class="fa-solid fa-comments text-xl mr-3"></i>
-                    <h3 class="text-lg font-semibold text-white">Communication Style</h3>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-green-900/30 border border-green-700/50 p-4 rounded-lg">
-                        <h4 class="text-green-400 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-check mr-1"></i> Do</h4>
-                        <ul class="text-sm space-y-2 text-slate-300">
-                            <li>Be spontaneous</li>
-                            <li>Talk tangibly & with enthusiasm</li>
-                            <li>Use an easy-going approach</li>
-                        </ul>
-                    </div>
-                    <div class="bg-red-900/30 border border-red-700/50 p-4 rounded-lg">
-                        <h4 class="text-red-400 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-xmark mr-1"></i> Don't</h4>
-                        <ul class="text-sm space-y-2 text-slate-300">
-                            <li>Stick rigidly to business</li>
-                            <li>Speak too slowly</li>
-                            <li>Emphasise established processes</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card 5: Colour Dynamics -->
-            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors md:col-span-2 lg:col-span-2">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="flex items-center text-yellow-400">
-                        <i class="fa-solid fa-chart-pie text-xl mr-3"></i>
-                        <h3 class="text-lg font-semibold text-white">Conscious Persona Dynamics</h3>
-                    </div>
-                    <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Hover bars for insights</span>
-                </div>
-                
-                <div class="flex items-end h-40 w-full space-x-2 md:space-x-4">
-                    <!-- Blue Energy -->
-                    <div class="has-tooltip relative flex-1 h-full flex items-end">
-                        <div class="w-full bg-blue-500 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 19%;"></div>
-                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-blue-500 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
-                            <strong>Blue Energy: 19%</strong><br>
-                            <span class="text-xs text-slate-400">Observer/Analytical</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Green Energy -->
-                    <div class="has-tooltip relative flex-1 h-full flex items-end">
-                        <div class="w-full bg-green-500 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 33%;"></div>
-                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-green-500 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
-                            <strong>Green Energy: 33%</strong><br>
-                            <span class="text-xs text-slate-400">Supporter/Amiable</span>
-                        </div>
-                    </div>
-
-                    <!-- Yellow Energy -->
-                    <div class="has-tooltip relative flex-1 h-full flex items-end">
-                        <div class="w-full bg-yellow-400 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 88%;"></div>
-                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-yellow-400 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
-                            <strong>Yellow Energy: 88%</strong><br>
-                            <span class="text-xs text-slate-400">Inspirer/Expressive</span>
-                        </div>
-                    </div>
-
-                    <!-- Red Energy -->
-                    <div class="has-tooltip relative flex-1 h-full flex items-end">
-                        <div class="w-full bg-red-500 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 69%;"></div>
-                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-red-500 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
-                            <strong>Red Energy: 69%</strong><br>
-                            <span class="text-xs text-slate-400">Director/Driver</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex justify-between w-full mt-2 text-xs font-semibold text-slate-400 px-2 md:px-6">
-                    <span class="text-center w-1/4">19%</span>
-                    <span class="text-center w-1/4">33%</span>
-                    <span class="text-center w-1/4">88%</span>
-                    <span class="text-center w-1/4">69%</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Executive Summary Section: Braze AI Solutions Context -->
-        <div class="mt-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 shadow-xl border border-slate-700">
-            <div class="flex items-center mb-6">
-                <div class="p-3 bg-indigo-500/20 rounded-lg mr-4">
-                    <i class="fa-solid fa-robot text-2xl text-indigo-400"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-white">Impact on the Braze AI Solutions Team</h3>
-            </div>
-            
-            <div class="space-y-5 text-slate-300 leading-relaxed">
-                <p>
-                    As a <strong class="text-white">Motivating Inspirer (26)</strong>, Zach brings a highly valuable, dynamic energy to the AI Solutions Consulting team at Braze. In a role that requires bridging the gap between cutting-edge artificial intelligence and practical customer engagement strategies, Zach serves as the ultimate translator and visionary. His off-the-charts Yellow energy (88%) means he excels at painting a compelling picture for clients, helping them look past intimidating technical jargon to see the transformative marketing potential of Braze's AI capabilities. He builds trust rapidly, turning standard vendor-client interactions into enthusiastic, forward-looking partnerships.
-                </p>
-                <p>
-                    Internally, Zach acts as a powerful catalyst for the consulting team. When the group gets bogged down in complex integration challenges or repetitive deployment routines (which naturally drain his energy), Zach is the one injecting fresh, out-of-the-box ideas and maintaining high team aspirations. His strong Red energy (69%) ensures that this enthusiasm isn't just talk; he has the proactive drive to initiate projects, push towards a consensus, and act swiftly to address immediate client needs to keep project momentum alive.
-                </p>
-                <div class="bg-slate-800/50 border-l-4 border-yellow-500 p-4 rounded-r-lg mt-6">
-                    <h4 class="text-white font-semibold mb-2 flex items-center">
-                        <i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> 
-                        Consulting Synergy & Growth
-                    </h4>
-                    <p class="text-sm">
-                        The AI consulting landscape requires meticulous attention to data privacy, systemic constraints, and technical accuracy. Given Zach's lower Blue energy (19%), his natural inclination is to focus on the "art of the possible" rather than granular technical limitations. To be at his absolute best, Zach thrives when pairing his visionary, client-facing charm with detail-oriented "Observer" teammates who can anchor his grand ideas with rigorous technical validation. This synergy ensures he never over-promises on AI deliverables while remaining the charismatic, inspiring face of the Braze team.
-                    </p>
-                </div>
-            </div>
-        </div>
-
+const TooltipItem = ({ title, tip, icon: Icon }) => (
+  <div className="relative group flex items-start space-x-3 p-3 rounded-lg hover:bg-slate-800/50 transition-colors cursor-help border border-transparent hover:border-slate-700">
+    <div className="mt-0.5 text-indigo-400">
+      <Icon size={18} />
     </div>
+    <span className="text-slate-200 font-medium">{title}</span>
+    
+    {/* Tooltip Content */}
+    <div className="absolute z-10 w-64 p-3 text-sm text-slate-100 bg-slate-900 border border-indigo-500/30 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
+      <div className="absolute w-3 h-3 bg-slate-900 border-b border-r border-indigo-500/30 transform rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></div>
+      {tip}
+    </div>
+  </div>
+);
 
-</body>
-</html>
+const SectionCard = ({ title, icon: Icon, headerRight, children, className = "" }) => (
+  <div className={`bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm ${className}`}>
+    <div className="flex items-center justify-between border-b border-slate-700/50 pb-4 mb-6">
+      <div className="flex items-center space-x-3">
+        <div className="p-2 bg-indigo-500/10 rounded-lg">
+          <Icon className="text-indigo-400" size={24} />
+        </div>
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
+      </div>
+      {headerRight && <div>{headerRight}</div>}
+    </div>
+    {children}
+  </div>
+);
+
+// --- Radar Chart Component ---
+const RadarChart = ({ data, viewMode }) => {
+  // Angle mappings match Insights Discovery wheel quadrants
+  const angles = { 'Blue': 315, 'Red': 45, 'Yellow': 135, 'Green': 225 };
+  
+  // Re-order data so the polygon connects in a clean, non-intersecting circle
+  const radarOrder = ['Blue', 'Red', 'Yellow', 'Green'];
+  const orderedData = radarOrder.map(c => data.find(d => d.color === c));
+  
+  const getPoint = (val, colorName) => {
+    const r = (val / 100) * 100; // max radius 100 on a 300x300 canvas
+    const rad = (angles[colorName] - 90) * (Math.PI / 180); // -90 aligns 0 deg to Top
+    return `${150 + r * Math.cos(rad)},${150 + r * Math.sin(rad)}`;
+  };
+
+  const otherViewMode = viewMode === 'conscious' ? 'unconscious' : 'conscious';
+  const activePoints = orderedData.map(d => getPoint(d[viewMode], d.color)).join(' ');
+  const otherPoints = orderedData.map(d => getPoint(d[otherViewMode], d.color)).join(' ');
+
+  return (
+    <svg viewBox="0 0 300 300" className="w-full h-full max-h-72 drop-shadow-xl overflow-visible">
+      {/* Grid rings */}
+      {[25, 50, 75, 100].map(val => (
+        <polygon 
+          key={val} 
+          points={orderedData.map(d => getPoint(val, d.color)).join(' ')} 
+          fill="none" 
+          stroke="#334155" 
+          strokeWidth="1" 
+          strokeDasharray="4 4" 
+        />
+      ))}
+      
+      {/* Axes */}
+      {orderedData.map(d => {
+        const [x, y] = getPoint(100, d.color).split(',');
+        return <line key={`axis-${d.color}`} x1="150" y1="150" x2={x} y2={y} stroke="#334155" strokeWidth="1" />;
+      })}
+
+      {/* Inactive Outline (for comparison context) */}
+      <polygon 
+        points={otherPoints} 
+        fill="none" 
+        stroke="#475569" 
+        strokeWidth="1.5" 
+        strokeDasharray="4 4" 
+        className="transition-all duration-700 ease-in-out" 
+      />
+
+      {/* Active Polygon */}
+      <polygon 
+        points={activePoints} 
+        fill="rgba(99, 102, 241, 0.2)" 
+        stroke="#818cf8" 
+        strokeWidth="2.5" 
+        className="transition-all duration-700 ease-in-out" 
+      />
+
+      {/* Points */}
+      {orderedData.map(d => {
+        const [cx, cy] = getPoint(d[viewMode], d.color).split(',');
+        return (
+          <circle 
+            key={`pt-${d.color}`} 
+            cx={cx} 
+            cy={cy} 
+            r="5" 
+            fill={d.fill} 
+            className="transition-all duration-700 ease-in-out" 
+          />
+        );
+      })}
+
+      {/* Outer Labels */}
+      {orderedData.map(d => {
+        const [x, y] = getPoint(120, d.color).split(',');
+        return (
+          <text 
+            key={`lbl-${d.color}`} 
+            x={x} 
+            y={y} 
+            fill="#94a3b8" 
+            fontSize="13" 
+            textAnchor="middle" 
+            dominantBaseline="middle" 
+            fontWeight="600"
+            className="uppercase tracking-widest"
+          >
+            {d.color}
+          </text>
+        );
+      })}
+    </svg>
+  );
+};
+
+export default function App() {
+  const [viewMode, setViewMode] = useState('conscious'); // 'conscious' | 'unconscious'
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans selection:bg-indigo-500/30">
+      
+      {/* Header */}
+      <header className="relative overflow-hidden bg-slate-900 border-b border-slate-800 pt-20 pb-16 px-6 sm:px-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-slate-900 to-slate-900 pointer-events-none"></div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mb-4">
+                <BrainCircuit size={16} />
+                <span>Insights® Discovery Profile</span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-2">
+                {profileData.name}
+              </h1>
+              <p className="text-xl md:text-2xl text-slate-400 font-light">
+                {profileData.role} <span className="text-indigo-400 font-medium">@ {profileData.company}</span>
+              </p>
+            </div>
+            <div className="text-left md:text-right">
+              <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold mb-1">Wheel Position</p>
+              <p className="text-lg text-slate-200 border-l-4 md:border-l-0 md:border-r-4 border-indigo-500 pl-3 md:pl-0 md:pr-3 py-1">
+                {profileData.type}
+              </p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Dashboard */}
+      <main className="max-w-6xl mx-auto px-6 sm:px-12 py-12 space-y-8">
+        
+        <p className="text-lg text-slate-300 leading-relaxed max-w-4xl">
+          {profileData.overview} <em>Hover over the items below to reveal deeper psychological insights.</em>
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Left Column: Strengths & Weaknesses */}
+          <div className="lg:col-span-1 space-y-8">
+            <SectionCard title="Key Strengths" icon={Award}>
+              <div className="space-y-1">
+                {profileData.strengths.map((item, idx) => (
+                  <TooltipItem key={idx} title={item.title} tip={item.tip} icon={ChevronRight} />
+                ))}
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Possible Blind Spots" icon={ShieldAlert}>
+              <div className="space-y-1">
+                {profileData.weaknesses.map((item, idx) => (
+                  <TooltipItem key={idx} title={item.title} tip={item.tip} icon={ChevronRight} />
+                ))}
+              </div>
+            </SectionCard>
+          </div>
+
+          {/* Middle & Right Column: Color Dynamics & Comms */}
+          <div className="lg:col-span-2 space-y-8">
+            
+            {/* Color Dynamics & Preference Flow */}
+            <SectionCard 
+              title="Color Dynamics & Preference Flow" 
+              icon={Activity}
+              headerRight={
+                <div className="flex space-x-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700">
+                  <button 
+                    onClick={() => setViewMode('conscious')} 
+                    className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all ${viewMode === 'conscious' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                  >
+                    Conscious
+                  </button>
+                  <button 
+                    onClick={() => setViewMode('unconscious')} 
+                    className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all ${viewMode === 'unconscious' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+                  >
+                    Less Conscious
+                  </button>
+                </div>
+              }
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center pt-6 pb-2">
+                
+                {/* Bar Graph */}
+                <div className="flex justify-between items-end h-64 gap-3 sm:gap-6 w-full">
+                  {profileData.colorDynamics.map((color, idx) => (
+                    <div key={idx} className="relative group w-full flex flex-col justify-end h-full">
+                      <div className="absolute -top-10 w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-xs font-semibold bg-slate-800 px-2 py-1 rounded text-slate-200 shadow-lg">
+                          {color[viewMode]}%
+                        </span>
+                      </div>
+                      <div 
+                        className={`w-full rounded-t-lg ${color.hex} shadow-[0_0_15px_rgba(0,0,0,0.2)] transition-all duration-700 ease-in-out group-hover:brightness-110 cursor-help relative`}
+                        style={{ height: `${color[viewMode]}%` }}
+                      >
+                        {/* Tooltip for Colors */}
+                        <div className="absolute z-20 w-48 p-3 text-xs text-slate-100 bg-slate-900 border border-slate-700 rounded shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
+                          <span className="font-bold mb-1 block">{color.color} Energy</span>
+                          {color.description}
+                        </div>
+                      </div>
+                      <div className="text-center mt-3 text-xs sm:text-sm font-medium text-slate-400 uppercase tracking-wider">
+                        {color.color}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Radar Graph */}
+                <div className="h-64 flex justify-center items-center w-full">
+                  <RadarChart data={profileData.colorDynamics} viewMode={viewMode} />
+                </div>
+
+              </div>
+            </SectionCard>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Communication Strategies */}
+              <SectionCard title="Interaction Matrix" icon={MessageSquare} className="md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="text-emerald-400 font-semibold mb-4 flex items-center"><Zap size={16} className="mr-2"/> Effective Strategies</h3>
+                    <div className="space-y-1">
+                      {profileData.communication.dos.map((item, idx) => (
+                        <TooltipItem key={idx} title={item.rule} tip={item.tip} icon={ChevronRight} />
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <h3 className="text-rose-400 font-semibold mb-4 flex items-center"><ShieldAlert size={16} className="mr-2"/> Barriers to Avoid</h3>
+                    <div className="space-y-1">
+                      {profileData.communication.donts.map((item, idx) => (
+                        <TooltipItem key={idx} title={item.rule} tip={item.tip} icon={ChevronRight} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </SectionCard>
+            </div>
+          </div>
+        </div>
+
+        {/* Value to Team - Full Width */}
+        <SectionCard title="Value to the Team" icon={Users}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {profileData.teamValue.map((item, idx) => (
+              <TooltipItem key={idx} title={item.title} tip={item.tip} icon={Target} />
+            ))}
+          </div>
+        </SectionCard>
+
+        {/* AI Solutions Consultant Braze Synthesis */}
+        <div className="mt-16 bg-gradient-to-br from-indigo-950 to-slate-900 border border-indigo-500/20 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none"></div>
+          
+          <div className="relative z-10">
+            <div className="flex items-center space-x-4 mb-8">
+              <div className="p-3 bg-indigo-500/20 rounded-xl">
+                <Target className="text-indigo-400" size={32} />
+              </div>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-white">Impact Synthesis at Braze</h2>
+                <p className="text-indigo-300 font-medium">Applying the Motivating Inspirer to AI Solutions Consulting</p>
+              </div>
+            </div>
+
+            <div className="space-y-6 text-slate-300 leading-relaxed text-lg">
+              <p>
+                As a <strong className="text-white font-semibold">26: Motivating Inspirer (Classic)</strong>, Zach brings an infectious, highly dynamic blend of visionary thinking and relationship-building to the AI Solutions Consulting team at Braze. In an industry where complex artificial intelligence concepts must be translated into compelling client narratives, his dominant Yellow (enthusiastic/expressive) combined with high Red (driven/resolute) makes him exceptionally suited for winning client trust and driving innovative strategies.
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
+                <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50">
+                  <h4 className="text-indigo-400 font-semibold text-xl mb-3">Evangelizing AI Solutions</h4>
+                  <p className="text-sm">
+                    Zach views every client interaction as an opportunity to inspire. When pitching Braze's AI capabilities, he naturally focuses on the "art of the possible." He excels at transforming dry, technical features into exciting, easy-to-understand visions that captivate stakeholders and drive adoption.
+                  </p>
+                </div>
+
+                <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50">
+                  <h4 className="text-indigo-400 font-semibold text-xl mb-3">Client & Team Dynamics</h4>
+                  <p className="text-sm">
+                    As a natural diplomat and relationship builder, Zach anchors the consulting team's client engagements with warmth and charisma. He thrives in collaborative, fast-paced environments, effortlessly navigating complex stakeholder dynamics and ensuring that everyone feels heard and motivated toward a shared goal.
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-slate-700/50">
+                <h3 className="text-white font-semibold text-xl mb-4">Maximizing Zach's Potential at Braze</h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start">
+                    <span className="text-indigo-400 mr-3 mt-1">✦</span>
+                    <div>
+                      <strong className="text-slate-200">Consulting Synergy & Growth Area:</strong> Because Braze operates in a highly technical MarTech ecosystem, Zach's lowest energy—Blue (Observer)—highlights an essential growth opportunity. His tendency to prioritize the "big picture" and eagerness to please can lead to over-promising or glossing over architectural details. Leadership should partner him with highly analytical peers to validate technical feasibility, ensuring his brilliant visions are backed by airtight execution.
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  );
+}
