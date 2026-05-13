@@ -1,399 +1,369 @@
-import React, { useState } from 'react';
-import { 
-  BrainCircuit, 
-  Target, 
-  Users, 
-  MessageSquare, 
-  ShieldAlert, 
-  Zap,
-  Activity,
-  Award,
-  ChevronRight
-} from 'lucide-react';
-
-// --- Data Extracted from Zach Martin's Insights Profile ---
-const profileData = {
-  name: "Zach Martin",
-  role: "AI Solutions Consultant",
-  company: "Braze",
-  type: "26: Motivating Inspirer (Classic)",
-  overview: "Zach enthusiastically and co-operatively joins in activities and can juggle several tasks at once. He radiates goodwill, enthusiasm, and a natural charisma, making him highly adept at building relationships and inspiring teams.",
-  colorDynamics: [
-    { color: 'Blue', conscious: 19, unconscious: 12, hex: 'bg-blue-600', fill: '#2563eb', description: 'Less naturally inclined toward rigid analysis; prefers dynamic action to painstaking detail.' },
-    { color: 'Green', conscious: 33, unconscious: 31, hex: 'bg-green-500', fill: '#22c55e', description: 'Even-tempered and tolerant, valuing harmony and democratic processes within the team.' },
-    { color: 'Yellow', conscious: 88, unconscious: 81, hex: 'bg-yellow-400', fill: '#facc15', description: 'Radiates goodwill, enthusiasm, and charismatic charm. Highly articulate and socially adept.' },
-    { color: 'Red', conscious: 69, unconscious: 67, hex: 'bg-red-600', fill: '#dc2626', description: 'High drive, direction, and sociability. Throws himself completely into new inspirations.' }
-  ],
-  strengths: [
-    { title: "Relationship Builder", tip: "Builds relationships quickly and effectively, ensuring strong team and client bonds." },
-    { title: "Articulate Communicator", tip: "Articulate and active in communication, exuding charismatic charm." },
-    { title: "Idea Generator", tip: "Generates a prolific number of ideas and possibilities beyond the obvious." },
-    { title: "Empathetic & Perceptive", tip: "Good at 'reading' people and perceptive of the potential in others' views." },
-    { title: "Inspirational Approach", tip: "Provides inspiration and enthusiasm, bringing fresh ways of thinking to the group." }
-  ],
-  weaknesses: [
-    { title: "Unrealistic Deadlines", tip: "May set unrealistic deadlines for himself and others due to eagerness." },
-    { title: "Poor Preparation", tip: "May prepare inadequately or poorly, ignoring the practical details." },
-    { title: "Impulsive Speech", tip: "May occasionally say something without thinking, and then regret it." },
-    { title: "Lacks Persistence", tip: "Somewhat lacking in persistence once a job becomes routine or dull." },
-    { title: "Over-promises", tip: "In his attempts to please others, he may make promises he cannot fulfill." }
-  ],
-  teamValue: [
-    { title: "High Aspirations", tip: "Maintains and generates high team aspirations and morale." },
-    { title: "Activity Creator", tip: "Creates considerable activity and can juggle several tasks at once." },
-    { title: "Positive Player", tip: "Seen as a positive team player who promotes harmony and democracy." }
-  ],
-  communication: {
-    dos: [
-      { rule: "Positive & Open", tip: "Maintain a positive and open stance; share problems openly." },
-      { rule: "Talk with Enthusiasm", tip: "Talk tangibly and with enthusiasm to match his energy." },
-      { rule: "Be Spontaneous", tip: "Be spontaneous and harmonious; provide lots of team contact." }
-    ],
-    donts: [
-      { rule: "Don't Be Rigid", tip: "Avoid sticking rigidly to business issues or emphasizing established processes." },
-      { rule: "Don't Dampen Energy", tip: "Never dampen his enthusiastic energy with negative inputs or hostile environments." },
-      { rule: "Don't Dictate", tip: "Don't expect a favorable response if you dictate policy or unnecessarily challenge ideas." }
-    ]
-  }
-};
-
-// --- Components ---
-
-const TooltipItem = ({ title, tip, icon: Icon }) => (
-  <div className="relative group flex items-start space-x-3 p-3 rounded-lg hover:bg-slate-800/50 transition-colors cursor-help border border-transparent hover:border-slate-700">
-    <div className="mt-0.5 text-indigo-400">
-      <Icon size={18} />
-    </div>
-    <span className="text-slate-200 font-medium">{title}</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights Discovery Dashboard - Zach Martin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    {/* Tooltip Content */}
-    <div className="absolute z-10 w-64 p-3 text-sm text-slate-100 bg-slate-900 border border-indigo-500/30 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
-      <div className="absolute w-3 h-3 bg-slate-900 border-b border-r border-indigo-500/30 transform rotate-45 -bottom-1.5 left-1/2 -translate-x-1/2"></div>
-      {tip}
-    </div>
-  </div>
-);
+    <style>
+        /* Custom Tooltip Styling */
+        .tooltip-container {
+            position: relative;
+            cursor: help;
+        }
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            z-index: 50;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: max-content;
+            max-width: 300px;
+            background-color: #1e293b;
+            color: #f8fafc;
+            text-align: left;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #475569;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transition: opacity 0.2s, visibility 0.2s;
+            font-weight: normal;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+        .tooltip-container:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+        .tooltip-content::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-300 font-sans min-h-screen p-6 md:p-12 selection:bg-indigo-500/30">
 
-const SectionCard = ({ title, icon: Icon, headerRight, children, className = "" }) => (
-  <div className={`bg-slate-800/40 border border-slate-700/50 rounded-2xl p-6 backdrop-blur-sm ${className}`}>
-    <div className="flex items-center justify-between border-b border-slate-700/50 pb-4 mb-6">
-      <div className="flex items-center space-x-3">
-        <div className="p-2 bg-indigo-500/10 rounded-lg">
-          <Icon className="text-indigo-400" size={24} />
-        </div>
-        <h2 className="text-xl font-semibold text-white">{title}</h2>
-      </div>
-      {headerRight && <div>{headerRight}</div>}
-    </div>
-    {children}
-  </div>
-);
+    <div class="max-w-6xl mx-auto space-y-8">
 
-// --- Radar Chart Component ---
-const RadarChart = ({ data, viewMode }) => {
-  // Angle mappings match Insights Discovery wheel quadrants
-  const angles = { 'Blue': 315, 'Red': 45, 'Yellow': 135, 'Green': 225 };
-  
-  // Re-order data so the polygon connects in a clean, non-intersecting circle
-  const radarOrder = ['Blue', 'Red', 'Yellow', 'Green'];
-  const orderedData = radarOrder.map(c => data.find(d => d.color === c));
-  
-  const getPoint = (val, colorName) => {
-    const r = (val / 100) * 100; // max radius 100 on a 300x300 canvas
-    const rad = (angles[colorName] - 90) * (Math.PI / 180); // -90 aligns 0 deg to Top
-    return `${150 + r * Math.cos(rad)},${150 + r * Math.sin(rad)}`;
-  };
-
-  const otherViewMode = viewMode === 'conscious' ? 'unconscious' : 'conscious';
-  const activePoints = orderedData.map(d => getPoint(d[viewMode], d.color)).join(' ');
-  const otherPoints = orderedData.map(d => getPoint(d[otherViewMode], d.color)).join(' ');
-
-  return (
-    <svg viewBox="0 0 300 300" className="w-full h-full max-h-72 drop-shadow-xl overflow-visible">
-      {/* Grid rings */}
-      {[25, 50, 75, 100].map(val => (
-        <polygon 
-          key={val} 
-          points={orderedData.map(d => getPoint(val, d.color)).join(' ')} 
-          fill="none" 
-          stroke="#334155" 
-          strokeWidth="1" 
-          strokeDasharray="4 4" 
-        />
-      ))}
-      
-      {/* Axes */}
-      {orderedData.map(d => {
-        const [x, y] = getPoint(100, d.color).split(',');
-        return <line key={`axis-${d.color}`} x1="150" y1="150" x2={x} y2={y} stroke="#334155" strokeWidth="1" />;
-      })}
-
-      {/* Inactive Outline (for comparison context) */}
-      <polygon 
-        points={otherPoints} 
-        fill="none" 
-        stroke="#475569" 
-        strokeWidth="1.5" 
-        strokeDasharray="4 4" 
-        className="transition-all duration-700 ease-in-out" 
-      />
-
-      {/* Active Polygon */}
-      <polygon 
-        points={activePoints} 
-        fill="rgba(99, 102, 241, 0.2)" 
-        stroke="#818cf8" 
-        strokeWidth="2.5" 
-        className="transition-all duration-700 ease-in-out" 
-      />
-
-      {/* Points */}
-      {orderedData.map(d => {
-        const [cx, cy] = getPoint(d[viewMode], d.color).split(',');
-        return (
-          <circle 
-            key={`pt-${d.color}`} 
-            cx={cx} 
-            cy={cy} 
-            r="5" 
-            fill={d.fill} 
-            className="transition-all duration-700 ease-in-out" 
-          />
-        );
-      })}
-
-      {/* Outer Labels */}
-      {orderedData.map(d => {
-        const [x, y] = getPoint(120, d.color).split(',');
-        return (
-          <text 
-            key={`lbl-${d.color}`} 
-            x={x} 
-            y={y} 
-            fill="#94a3b8" 
-            fontSize="13" 
-            textAnchor="middle" 
-            dominantBaseline="middle" 
-            fontWeight="600"
-            className="uppercase tracking-widest"
-          >
-            {d.color}
-          </text>
-        );
-      })}
-    </svg>
-  );
-};
-
-export default function App() {
-  const [viewMode, setViewMode] = useState('conscious'); // 'conscious' | 'unconscious'
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-300 font-sans selection:bg-indigo-500/30">
-      
-      {/* Header */}
-      <header className="relative overflow-hidden bg-slate-900 border-b border-slate-800 pt-20 pb-16 px-6 sm:px-12">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-slate-900 to-slate-900 pointer-events-none"></div>
-        <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm font-medium mb-4">
-                <BrainCircuit size={16} />
-                <span>Insights® Discovery Profile</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl font-bold text-white tracking-tight mb-2">
-                {profileData.name}
-              </h1>
-              <p className="text-xl md:text-2xl text-slate-400 font-light">
-                {profileData.role} <span className="text-indigo-400 font-medium">@ {profileData.company}</span>
-              </p>
+        <!-- Header -->
+        <header class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-xl relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-yellow-500/10 via-slate-900 to-slate-900 pointer-events-none"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div>
+                    <div class="inline-block px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-semibold mb-4">
+                        Insights® Discovery Profile
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Zach Martin</h1>
+                    <p class="text-lg text-slate-400">zachary.martin1@braze.com</p>
+                </div>
+                <div class="text-left md:text-right bg-slate-800/50 p-4 rounded-xl border border-slate-700/50">
+                    <p class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">Wheel Position</p>
+                    <h2 class="text-xl font-semibold text-yellow-400">26: Motivating Inspirer (Classic)</h2>
+                </div>
             </div>
-            <div className="text-left md:text-right">
-              <p className="text-sm text-slate-500 uppercase tracking-wider font-semibold mb-1">Wheel Position</p>
-              <p className="text-lg text-slate-200 border-l-4 md:border-l-0 md:border-r-4 border-indigo-500 pl-3 md:pl-0 md:pr-3 py-1">
-                {profileData.type}
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Dashboard */}
-      <main className="max-w-6xl mx-auto px-6 sm:px-12 py-12 space-y-8">
-        
-        <p className="text-lg text-slate-300 leading-relaxed max-w-4xl">
-          {profileData.overview} <em>Hover over the items below to reveal deeper psychological insights.</em>
-        </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column: Strengths & Weaknesses */}
-          <div className="lg:col-span-1 space-y-8">
-            <SectionCard title="Key Strengths" icon={Award}>
-              <div className="space-y-1">
-                {profileData.strengths.map((item, idx) => (
-                  <TooltipItem key={idx} title={item.title} tip={item.tip} icon={ChevronRight} />
-                ))}
-              </div>
-            </SectionCard>
-
-            <SectionCard title="Possible Blind Spots" icon={ShieldAlert}>
-              <div className="space-y-1">
-                {profileData.weaknesses.map((item, idx) => (
-                  <TooltipItem key={idx} title={item.title} tip={item.tip} icon={ChevronRight} />
-                ))}
-              </div>
-            </SectionCard>
-          </div>
-
-          {/* Middle & Right Column: Color Dynamics & Comms */}
-          <div className="lg:col-span-2 space-y-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Color Dynamics & Preference Flow */}
-            <SectionCard 
-              title="Color Dynamics & Preference Flow" 
-              icon={Activity}
-              headerRight={
-                <div className="flex space-x-1 bg-slate-900/80 p-1 rounded-lg border border-slate-700">
-                  <button 
-                    onClick={() => setViewMode('conscious')} 
-                    className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all ${viewMode === 'conscious' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
-                  >
-                    Conscious
-                  </button>
-                  <button 
-                    onClick={() => setViewMode('unconscious')} 
-                    className={`px-3 py-1.5 rounded-md text-xs sm:text-sm font-medium transition-all ${viewMode === 'unconscious' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
-                  >
-                    Less Conscious
-                  </button>
-                </div>
-              }
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center pt-6 pb-2">
-                
-                {/* Bar Graph */}
-                <div className="flex justify-between items-end h-64 gap-3 sm:gap-6 w-full">
-                  {profileData.colorDynamics.map((color, idx) => (
-                    <div key={idx} className="relative group w-full flex flex-col justify-end h-full">
-                      <div className="absolute -top-10 w-full text-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-xs font-semibold bg-slate-800 px-2 py-1 rounded text-slate-200 shadow-lg">
-                          {color[viewMode]}%
-                        </span>
-                      </div>
-                      <div 
-                        className={`w-full rounded-t-lg ${color.hex} shadow-[0_0_15px_rgba(0,0,0,0.2)] transition-all duration-700 ease-in-out group-hover:brightness-110 cursor-help relative`}
-                        style={{ height: `${color[viewMode]}%` }}
-                      >
-                        {/* Tooltip for Colors */}
-                        <div className="absolute z-20 w-48 p-3 text-xs text-slate-100 bg-slate-900 border border-slate-700 rounded shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full left-1/2 transform -translate-x-1/2 mb-2 pointer-events-none">
-                          <span className="font-bold mb-1 block">{color.color} Energy</span>
-                          {color.description}
-                        </div>
-                      </div>
-                      <div className="text-center mt-3 text-xs sm:text-sm font-medium text-slate-400 uppercase tracking-wider">
-                        {color.color}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Radar Graph */}
-                <div className="h-64 flex justify-center items-center w-full">
-                  <RadarChart data={profileData.colorDynamics} viewMode={viewMode} />
-                </div>
-
-              </div>
-            </SectionCard>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Communication Strategies */}
-              <SectionCard title="Interaction Matrix" icon={MessageSquare} className="md:col-span-2">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <h3 className="text-emerald-400 font-semibold mb-4 flex items-center"><Zap size={16} className="mr-2"/> Effective Strategies</h3>
-                    <div className="space-y-1">
-                      {profileData.communication.dos.map((item, idx) => (
-                        <TooltipItem key={idx} title={item.rule} tip={item.tip} icon={ChevronRight} />
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <h3 className="text-rose-400 font-semibold mb-4 flex items-center"><ShieldAlert size={16} className="mr-2"/> Barriers to Avoid</h3>
-                    <div className="space-y-1">
-                      {profileData.communication.donts.map((item, idx) => (
-                        <TooltipItem key={idx} title={item.rule} tip={item.tip} icon={ChevronRight} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </SectionCard>
-            </div>
-          </div>
-        </div>
-
-        {/* Value to Team - Full Width */}
-        <SectionCard title="Value to the Team" icon={Users}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {profileData.teamValue.map((item, idx) => (
-              <TooltipItem key={idx} title={item.title} tip={item.tip} icon={Target} />
-            ))}
-          </div>
-        </SectionCard>
-
-        {/* AI Solutions Consultant Braze Synthesis */}
-        <div className="mt-16 bg-gradient-to-br from-indigo-950 to-slate-900 border border-indigo-500/20 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
-          {/* Decorative background element */}
-          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-indigo-500/10 blur-3xl rounded-full pointer-events-none"></div>
-          
-          <div className="relative z-10">
-            <div className="flex items-center space-x-4 mb-8">
-              <div className="p-3 bg-indigo-500/20 rounded-xl">
-                <Target className="text-indigo-400" size={32} />
-              </div>
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-white">Impact Synthesis at Braze</h2>
-                <p className="text-indigo-300 font-medium">Applying the Motivating Inspirer to AI Solutions Consulting</p>
-              </div>
+            <!-- Card 1: Personal Style -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg lg:col-span-3">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center mr-3 text-indigo-400">❖</span>
+                    Personal Style
+                </h3>
+                <p class="text-slate-300 leading-relaxed text-lg">
+                    Zach enthusiastically and co-operatively joins in activities and can juggle several tasks at once. He radiates goodwill, enthusiasm, and a natural charisma, making him highly adept at building relationships and inspiring teams. Hover over the traits below to reveal deeper insights from the profile.
+                </p>
             </div>
 
-            <div className="space-y-6 text-slate-300 leading-relaxed text-lg">
-              <p>
-                As a <strong className="text-white font-semibold">26: Motivating Inspirer (Classic)</strong>, Zach brings an infectious, highly dynamic blend of visionary thinking and relationship-building to the AI Solutions Consulting team at Braze. In an industry where complex artificial intelligence concepts must be translated into compelling client narratives, his dominant Yellow (enthusiastic/expressive) combined with high Red (driven/resolute) makes him exceptionally suited for winning client trust and driving innovative strategies.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
-                <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50">
-                  <h4 className="text-indigo-400 font-semibold text-xl mb-3">Evangelizing AI Solutions</h4>
-                  <p className="text-sm">
-                    Zach views every client interaction as an opportunity to inspire. When pitching Braze's AI capabilities, he naturally focuses on the "art of the possible." He excels at transforming dry, technical features into exciting, easy-to-understand visions that captivate stakeholders and drive adoption.
-                  </p>
-                </div>
-
-                <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50">
-                  <h4 className="text-indigo-400 font-semibold text-xl mb-3">Client & Team Dynamics</h4>
-                  <p className="text-sm">
-                    As a natural diplomat and relationship builder, Zach anchors the consulting team's client engagements with warmth and charisma. He thrives in collaborative, fast-paced environments, effortlessly navigating complex stakeholder dynamics and ensuring that everyone feels heard and motivated toward a shared goal.
-                  </p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-700/50">
-                <h3 className="text-white font-semibold text-xl mb-4">Maximizing Zach's Potential at Braze</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start">
-                    <span className="text-indigo-400 mr-3 mt-1">✦</span>
-                    <div>
-                      <strong className="text-slate-200">Consulting Synergy & Growth Area:</strong> Because Braze operates in a highly technical MarTech ecosystem, Zach's lowest energy—Blue (Observer)—highlights an essential growth opportunity. His tendency to prioritize the "big picture" and eagerness to please can lead to over-promising or glossing over architectural details. Leadership should partner him with highly analytical peers to validate technical feasibility, ensuring his brilliant visions are backed by airtight execution.
-                    </div>
-                  </li>
+            <!-- Card 2: Key Strengths -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center mr-3 text-emerald-400">★</span>
+                    Key Strengths
+                </h3>
+                <ul class="space-y-4">
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Relationship Builder</span>
+                        <div class="tooltip-content">Builds relationships quickly and effectively, ensuring strong team and client bonds.</div>
+                    </li>
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Articulate Communicator</span>
+                        <div class="tooltip-content">Articulate and active in communication, exuding charismatic charm.</div>
+                    </li>
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Idea Generator</span>
+                        <div class="tooltip-content">Generates a prolific number of ideas and possibilities beyond the obvious.</div>
+                    </li>
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Empathetic & Perceptive</span>
+                        <div class="tooltip-content">Good at "reading" people and perceptive of the potential in others' views.</div>
+                    </li>
                 </ul>
-              </div>
             </div>
-          </div>
+
+            <!-- Card 3: Value to the Team -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center mr-3 text-blue-400">👥</span>
+                    Value to the Team
+                </h3>
+                <ul class="space-y-4">
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">High Aspirations</span>
+                        <div class="tooltip-content">Maintains and generates high team aspirations and morale.</div>
+                    </li>
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Activity Creator</span>
+                        <div class="tooltip-content">Creates considerable activity and can juggle several tasks at once.</div>
+                    </li>
+                    <li class="tooltip-container bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+                        <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Positive Player</span>
+                        <div class="tooltip-content">Seen as a positive team player who promotes harmony and democracy.</div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 4: Communication Style -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg lg:col-span-1">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+                    <span class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center mr-3 text-purple-400">💬</span>
+                    Communication Style
+                </h3>
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-sm font-bold text-emerald-400 uppercase tracking-wider mb-3">Effective (Do)</h4>
+                        <ul class="space-y-3">
+                            <li class="tooltip-container flex items-start">
+                                <span class="text-emerald-400 mr-2 mt-0.5">✓</span>
+                                <div>
+                                    <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Positive & Open</span>
+                                    <div class="tooltip-content">Maintain a positive and open stance; share problems openly.</div>
+                                </div>
+                            </li>
+                            <li class="tooltip-container flex items-start">
+                                <span class="text-emerald-400 mr-2 mt-0.5">✓</span>
+                                <div>
+                                    <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Talk with Enthusiasm</span>
+                                    <div class="tooltip-content">Talk tangibly and with enthusiasm to match his energy.</div>
+                                </div>
+                            </li>
+                            <li class="tooltip-container flex items-start">
+                                <span class="text-emerald-400 mr-2 mt-0.5">✓</span>
+                                <div>
+                                    <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Be Spontaneous</span>
+                                    <div class="tooltip-content">Be spontaneous and harmonious; provide lots of team contact.</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-rose-400 uppercase tracking-wider mb-3">Barriers (Don't)</h4>
+                        <ul class="space-y-3">
+                            <li class="tooltip-container flex items-start">
+                                <span class="text-rose-400 mr-2 mt-0.5">✗</span>
+                                <div>
+                                    <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Don't Be Rigid</span>
+                                    <div class="tooltip-content">Avoid sticking rigidly to business issues or emphasizing established processes.</div>
+                                </div>
+                            </li>
+                            <li class="tooltip-container flex items-start">
+                                <span class="text-rose-400 mr-2 mt-0.5">✗</span>
+                                <div>
+                                    <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Don't Dampen Energy</span>
+                                    <div class="tooltip-content">Never dampen his enthusiastic energy with negative inputs or hostile environments.</div>
+                                </div>
+                            </li>
+                            <li class="tooltip-container flex items-start">
+                                <span class="text-rose-400 mr-2 mt-0.5">✗</span>
+                                <div>
+                                    <span class="font-semibold text-slate-200 border-b border-dashed border-slate-500 pb-0.5">Don't Dictate</span>
+                                    <div class="tooltip-content">Don't expect a favorable response if you dictate policy or unnecessarily challenge ideas.</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Colour Dynamics -->
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-lg lg:col-span-3">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                    <span class="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center mr-3 text-yellow-400">📊</span>
+                    Colour Dynamics & Preference Flow
+                </h3>
+                <div class="w-full max-w-4xl mx-auto h-[400px]">
+                    <canvas id="colorDynamicsChart"></canvas>
+                </div>
+            </div>
+
         </div>
 
-      </main>
+        <!-- Executive Summary -->
+        <div class="bg-gradient-to-br from-slate-900 to-indigo-950/50 border border-indigo-500/30 p-8 md:p-12 rounded-3xl shadow-2xl mt-8">
+            <h3 class="text-2xl md:text-3xl font-bold mb-6 text-white border-b border-indigo-500/30 pb-4">
+                Impact on the Braze AI Solutions Team
+            </h3>
+            <div class="space-y-4 text-slate-300 text-lg leading-relaxed">
+                <p>
+                    As a <strong class="text-indigo-300">26: Motivating Inspirer (Classic)</strong>, Zach brings an infectious, highly dynamic blend of visionary thinking and relationship-building to the AI Solutions Consulting team at Braze. In an industry where complex artificial intelligence concepts must be translated into compelling client narratives, his dominant <strong class="text-yellow-400">Yellow</strong> (enthusiastic/expressive) combined with high <strong class="text-red-400">Red</strong> (driven/resolute) makes him exceptionally suited for winning client trust and driving innovative strategies. He excels at transforming dry, technical features into exciting, easy-to-understand visions that captivate stakeholders and drive adoption.
+                </p>
+                <p>
+                    As a natural diplomat and relationship builder, Zach anchors the consulting team's client engagements with warmth and charisma. He thrives in collaborative, fast-paced environments, effortlessly navigating complex stakeholder dynamics and ensuring that everyone feels heard and motivated toward a shared goal.
+                </p>
+                <div class="bg-slate-950/50 p-6 rounded-xl border border-slate-800 mt-6">
+                    <h4 class="text-indigo-400 font-bold mb-2 flex items-center">
+                        <span class="mr-2">✦</span> Consulting Synergy & Growth Area
+                    </h4>
+                    <p class="text-base">
+                        Because Braze operates in a highly technical ecosystem, Zach's lowest energy—<strong class="text-blue-400">Blue</strong> (Observer)—highlights an essential growth opportunity. His tendency to prioritize the "big picture" and eagerness to please can lead to over-promising or glossing over architectural details. Leadership should partner him with highly analytical peers to validate technical feasibility, ensuring his brilliant visions are backed by airtight execution.
+                    </p>
+                </div>
+            </div>
+        </div>
+
     </div>
-  );
-}
+
+    <!-- Data Injection and Chart Rendering -->
+    <script>
+        // Injected Data Mapping
+        const profileData = { 
+            conscious: { blue: 19, green: 33, yellow: 88, red: 69 }, 
+            unconscious: { blue: 12, green: 31, yellow: 81, red: 67 } 
+        };
+
+        // Initialize Chart.js
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('colorDynamicsChart').getContext('2d');
+            
+            // Custom plugin to draw labels on top of bars
+            const barAvatarPlugin = {
+                id: 'barLabels',
+                afterDatasetsDraw(chart, args, pluginOptions) {
+                    const { ctx, data } = chart;
+                    ctx.save();
+                    
+                    chart.getDatasetMeta(0).data.forEach((datapoint, index) => {
+                        const value = data.datasets[0].data[index];
+                        ctx.font = 'bold 14px sans-serif';
+                        ctx.fillStyle = '#ffffff';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`${value}%`, datapoint.x, datapoint.y - 10);
+                    });
+                    
+                    chart.getDatasetMeta(1).data.forEach((datapoint, index) => {
+                        const value = data.datasets[1].data[index];
+                        ctx.font = 'bold 12px sans-serif';
+                        ctx.fillStyle = '#94a3b8';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(`${value}%`, datapoint.x, datapoint.y - 10);
+                    });
+                    
+                    ctx.restore();
+                }
+            };
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Blue (Observer)', 'Green (Supporter)', 'Yellow (Inspirer)', 'Red (Director)'],
+                    datasets: [
+                        {
+                            label: 'Conscious Persona',
+                            data: [profileData.conscious.blue, profileData.conscious.green, profileData.conscious.yellow, profileData.conscious.red],
+                            backgroundColor: ['#2563eb', '#16a34a', '#eab308', '#dc2626'],
+                            borderWidth: 0,
+                            borderRadius: 6,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.4
+                        },
+                        {
+                            label: 'Less Conscious Persona',
+                            data: [profileData.unconscious.blue, profileData.unconscious.green, profileData.unconscious.yellow, profileData.unconscious.red],
+                            backgroundColor: ['rgba(37, 99, 235, 0.3)', 'rgba(22, 163, 74, 0.3)', 'rgba(234, 179, 8, 0.3)', 'rgba(220, 38, 38, 0.3)'],
+                            borderColor: ['#3b82f6', '#22c55e', '#facc15', '#ef4444'],
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            borderRadius: 6,
+                            barPercentage: 0.8,
+                            categoryPercentage: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 30
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#cbd5e1',
+                                font: {
+                                    weight: 'bold',
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#cbd5e1',
+                                padding: 20,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#cbd5e1',
+                            borderColor: 'rgba(99, 102, 241, 0.3)',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            boxPadding: 4
+                        }
+                    }
+                },
+                plugins: [barAvatarPlugin]
+            });
+        });
+    </script>
+</body>
+</html>
