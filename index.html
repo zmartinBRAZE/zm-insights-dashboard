@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zach Martin - Personality Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+        
+        /* Custom Tooltip Styling */
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+        }
+        
+        .has-tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #facc15, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-12">
+
+    <div class="max-w-6xl mx-auto">
+        <!-- Header Profile Section -->
+        <header class="text-center mb-12">
+            <div class="inline-block p-1 rounded-full bg-gradient-to-r from-yellow-400 to-red-500 mb-4">
+                <div class="h-24 w-24 rounded-full bg-slate-900 flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-user-astronaut text-yellow-400"></i>
+                </div>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold mb-2">Zach Martin</h1>
+            <h2 class="text-xl md:text-2xl text-slate-300 font-light mb-4">26: <span class="gradient-text font-semibold">Motivating Inspirer</span> (Classic)</h2>
+            <div class="flex items-center justify-center space-x-2 text-sm text-slate-400">
+                <i class="fa-solid fa-envelope"></i>
+                <span>zachary.martin1@braze.com</span>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Card 1: Personal Style -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors">
+                <div class="flex items-center mb-4 text-blue-400">
+                    <i class="fa-solid fa-bolt text-xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-white">Personal Style</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Energetic & Cooperative</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Zach enthusiastically and co-operatively joins in activities and can juggle several activities at once. Bored by repetitive facts.
+                        </div>
+                    </li>
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Radiates Goodwill</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            He is optimistic about life in general and human potential in particular. Attends to others' wants as a satisfying expression of deeper needs.
+                        </div>
+                    </li>
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Big Picture Thinker</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Comfortable letting others manage technical aspects so he can devote full energies to creating a co-operative, comfortable environment.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 2: Key Strengths -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors">
+                <div class="flex items-center mb-4 text-green-400">
+                    <i class="fa-solid fa-star text-xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-white">Key Strengths</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Relationship Builder</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Builds relationships quickly and effectively. Has an outgoing nature.
+                        </div>
+                    </li>
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Articulate Communicator</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Articulate and active in communication. Interactive and inspirational approach.
+                        </div>
+                    </li>
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Perceptive & Empathetic</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Compassionate to those around him. Can "go with the flow", particularly where people are concerned.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 3: Value to the Team -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors">
+                <div class="flex items-center mb-4 text-purple-400">
+                    <i class="fa-solid fa-users text-xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-white">Value to the Team</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Idea Generator</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Generates a prolific number of ideas and impacts many and varied concepts.
+                        </div>
+                    </li>
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Activity Catalyst</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Creates considerable activity. Exudes high drive, direction, and sociability.
+                        </div>
+                    </li>
+                    <li class="has-tooltip relative bg-slate-700/50 p-3 rounded-lg cursor-pointer hover:bg-slate-700 transition">
+                        <div class="flex justify-between items-center">
+                            <span class="font-medium">Aspirational Leader</span>
+                            <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
+                        </div>
+                        <div class="tooltip-content absolute z-50 w-64 bg-slate-900 text-slate-200 text-sm p-4 rounded-xl shadow-2xl border border-slate-700 bottom-full left-1/2 -translate-x-1/2 mb-2">
+                            Maintains and generates high team aspirations. Provides inspiration and enthusiasm.
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Card 4: Communication -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors md:col-span-2 lg:col-span-1">
+                <div class="flex items-center mb-4 text-pink-400">
+                    <i class="fa-solid fa-comments text-xl mr-3"></i>
+                    <h3 class="text-lg font-semibold text-white">Communication Style</h3>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-green-900/30 border border-green-700/50 p-4 rounded-lg">
+                        <h4 class="text-green-400 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-check mr-1"></i> Do</h4>
+                        <ul class="text-sm space-y-2 text-slate-300">
+                            <li>Be spontaneous</li>
+                            <li>Talk tangibly & with enthusiasm</li>
+                            <li>Use an easy-going approach</li>
+                        </ul>
+                    </div>
+                    <div class="bg-red-900/30 border border-red-700/50 p-4 rounded-lg">
+                        <h4 class="text-red-400 text-sm font-bold mb-2 uppercase tracking-wider"><i class="fa-solid fa-xmark mr-1"></i> Don't</h4>
+                        <ul class="text-sm space-y-2 text-slate-300">
+                            <li>Stick rigidly to business</li>
+                            <li>Speak too slowly</li>
+                            <li>Emphasise established processes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Colour Dynamics -->
+            <div class="bg-slate-800 rounded-2xl p-6 shadow-lg border border-slate-700 hover:border-slate-500 transition-colors md:col-span-2 lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center text-yellow-400">
+                        <i class="fa-solid fa-chart-pie text-xl mr-3"></i>
+                        <h3 class="text-lg font-semibold text-white">Conscious Persona Dynamics</h3>
+                    </div>
+                    <span class="text-xs text-slate-400 bg-slate-700 px-2 py-1 rounded">Hover bars for insights</span>
+                </div>
+                
+                <div class="flex items-end h-40 w-full space-x-2 md:space-x-4">
+                    <!-- Blue Energy -->
+                    <div class="has-tooltip relative flex-1 h-full flex items-end">
+                        <div class="w-full bg-blue-500 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 19%;"></div>
+                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-blue-500 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
+                            <strong>Blue Energy: 19%</strong><br>
+                            <span class="text-xs text-slate-400">Observer/Analytical</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Green Energy -->
+                    <div class="has-tooltip relative flex-1 h-full flex items-end">
+                        <div class="w-full bg-green-500 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 33%;"></div>
+                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-green-500 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
+                            <strong>Green Energy: 33%</strong><br>
+                            <span class="text-xs text-slate-400">Supporter/Amiable</span>
+                        </div>
+                    </div>
+
+                    <!-- Yellow Energy -->
+                    <div class="has-tooltip relative flex-1 h-full flex items-end">
+                        <div class="w-full bg-yellow-400 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 88%;"></div>
+                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-yellow-400 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
+                            <strong>Yellow Energy: 88%</strong><br>
+                            <span class="text-xs text-slate-400">Inspirer/Expressive</span>
+                        </div>
+                    </div>
+
+                    <!-- Red Energy -->
+                    <div class="has-tooltip relative flex-1 h-full flex items-end">
+                        <div class="w-full bg-red-500 rounded-t-md transition-all duration-500 hover:opacity-80" style="height: 69%;"></div>
+                        <div class="tooltip-content absolute z-50 w-48 bg-slate-900 text-slate-200 text-sm p-3 rounded-xl shadow-2xl border border-red-500 bottom-full left-1/2 -translate-x-1/2 mb-2 text-center">
+                            <strong>Red Energy: 69%</strong><br>
+                            <span class="text-xs text-slate-400">Director/Driver</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between w-full mt-2 text-xs font-semibold text-slate-400 px-2 md:px-6">
+                    <span class="text-center w-1/4">19%</span>
+                    <span class="text-center w-1/4">33%</span>
+                    <span class="text-center w-1/4">88%</span>
+                    <span class="text-center w-1/4">69%</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Executive Summary Section: Braze AI Solutions Context -->
+        <div class="mt-8 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 shadow-xl border border-slate-700">
+            <div class="flex items-center mb-6">
+                <div class="p-3 bg-indigo-500/20 rounded-lg mr-4">
+                    <i class="fa-solid fa-robot text-2xl text-indigo-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Impact on the Braze AI Solutions Team</h3>
+            </div>
+            
+            <div class="space-y-5 text-slate-300 leading-relaxed">
+                <p>
+                    As a <strong class="text-white">Motivating Inspirer (26)</strong>, Zach brings a highly valuable, dynamic energy to the AI Solutions Consulting team at Braze. In a role that requires bridging the gap between cutting-edge artificial intelligence and practical customer engagement strategies, Zach serves as the ultimate translator and visionary. His off-the-charts Yellow energy (88%) means he excels at painting a compelling picture for clients, helping them look past intimidating technical jargon to see the transformative marketing potential of Braze's AI capabilities. He builds trust rapidly, turning standard vendor-client interactions into enthusiastic, forward-looking partnerships.
+                </p>
+                <p>
+                    Internally, Zach acts as a powerful catalyst for the consulting team. When the group gets bogged down in complex integration challenges or repetitive deployment routines (which naturally drain his energy), Zach is the one injecting fresh, out-of-the-box ideas and maintaining high team aspirations. His strong Red energy (69%) ensures that this enthusiasm isn't just talk; he has the proactive drive to initiate projects, push towards a consensus, and act swiftly to address immediate client needs to keep project momentum alive.
+                </p>
+                <div class="bg-slate-800/50 border-l-4 border-yellow-500 p-4 rounded-r-lg mt-6">
+                    <h4 class="text-white font-semibold mb-2 flex items-center">
+                        <i class="fa-solid fa-lightbulb text-yellow-500 mr-2"></i> 
+                        Consulting Synergy & Growth
+                    </h4>
+                    <p class="text-sm">
+                        The AI consulting landscape requires meticulous attention to data privacy, systemic constraints, and technical accuracy. Given Zach's lower Blue energy (19%), his natural inclination is to focus on the "art of the possible" rather than granular technical limitations. To be at his absolute best, Zach thrives when pairing his visionary, client-facing charm with detail-oriented "Observer" teammates who can anchor his grand ideas with rigorous technical validation. This synergy ensures he never over-promises on AI deliverables while remaining the charismatic, inspiring face of the Braze team.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
